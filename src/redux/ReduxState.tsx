@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {storeData} from '../utils/StorageHandler.tsx';
 import {Expense, ExpenseSection} from '../types/Types.tsx';
+import {typeOfModalToShow} from '../utils/TypeOfModal.tsx';
 
 export type CounterState = {
   currentExpense: Expense;
@@ -9,6 +10,9 @@ export type CounterState = {
   expenses: ExpenseSection[];
   filterExpenses: ExpenseSection[];
   totalAmount: number;
+  typeOfModal: string;
+  filters: string[];
+  filteredExpensesValue: string;
 };
 
 const createInitialState = (): CounterState => ({
@@ -18,6 +22,9 @@ const createInitialState = (): CounterState => ({
   totalAmount: 0,
   filterExpenses: [],
   expenses: [],
+  typeOfModal: typeOfModalToShow.EDIT,
+  filters: [],
+  filteredExpensesValue: '',
 });
 
 const initialState = createInitialState();
@@ -35,6 +42,10 @@ export const counterReducer = createSlice({
       action: PayloadAction<Partial<CounterState>>,
     ) => {
       Object.keys(action.payload).forEach(key => {
+        if (key === 'expenses') {
+          (state as any).filterExpenses =
+            action.payload[key as keyof CounterState];
+        }
         (state as any)[key] = action.payload[key as keyof CounterState];
       });
     },
@@ -93,10 +104,24 @@ export const counterReducer = createSlice({
     ) => {
       state.currentExpense = action.payload;
     },
+    setTypeOfModal: (state: CounterState, action: PayloadAction<string>) => {
+      state.typeOfModal = action.payload;
+    },
+    setFilters: (state: CounterState, action: PayloadAction<string[]>) => {
+      state.filters = action.payload;
+    },
+    setFilteredExpensesValue: (
+      state: CounterState,
+      action: PayloadAction<string>,
+    ) => {
+      state.filteredExpensesValue = action.payload;
+    },
   },
 });
 
 export const {
+  setFilteredExpensesValue,
+  setTypeOfModal,
   setExpenses,
   deleteExpense,
   setFilteredExpenses,
@@ -106,6 +131,7 @@ export const {
   setCurrentExpense,
   setLoadingData,
   restState,
+  setFilters,
 } = counterReducer.actions;
 
 export default counterReducer.reducer;

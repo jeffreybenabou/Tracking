@@ -5,7 +5,12 @@ import RenderItem from './RenderItem';
 import SectionHeader from './SectionHeader';
 import {useModal} from '../modal/ModalProvider';
 import {useDispatch} from 'react-redux';
-import {deleteExpense, setCurrentExpense} from '../../redux/ReduxState';
+import {
+  deleteExpense,
+  setCurrentExpense,
+  setTypeOfModal,
+} from '../../redux/ReduxState';
+import {typeOfModalToShow} from '../../utils/TypeOfModal.tsx';
 
 const CustomListSection: React.FC<SectionProps> = props => {
   const {openModal} = useModal();
@@ -13,6 +18,7 @@ const CustomListSection: React.FC<SectionProps> = props => {
 
   const editAction = useCallback((item: Expense) => {
     dispatch(setCurrentExpense(item));
+    dispatch(setTypeOfModal(typeOfModalToShow.EDIT));
     openModal();
   }, []);
 
@@ -42,7 +48,6 @@ const CustomListSection: React.FC<SectionProps> = props => {
       sections={props.sections}
       renderSectionHeader={renderSectionHeader}
       renderItem={renderItem}
-      keyExtractor={(item: Expense) => item.id.toString()} // Ensure unique keys
     />
   );
 };

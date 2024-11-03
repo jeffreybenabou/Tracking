@@ -4,9 +4,13 @@ import CustomButton from '../components/CustomButton.tsx';
 import {ICON_TYPES} from '../components/CustomIcon.tsx';
 import SCREEN_NAMES from '../utils/ScreensNames.tsx';
 import {useModal} from '../components/modal/ModalProvider.tsx';
+import {useDispatch} from 'react-redux';
+import {setTypeOfModal} from '../redux/ReduxState.tsx';
+import {typeOfModalToShow} from '../utils/TypeOfModal.tsx';
 
 const CustomTabNavigation = ({navigation}: {navigation: any}) => {
   const {openModal} = useModal();
+  const dispatch = useDispatch();
   return (
     <View style={style.container}>
       <CustomButton
@@ -16,7 +20,10 @@ const CustomTabNavigation = ({navigation}: {navigation: any}) => {
         textProps={{text: 'Home'}}
       />
       <CustomButton
-        onPress={() => openModal()}
+        onPress={() => {
+          dispatch(setTypeOfModal(typeOfModalToShow.EDIT));
+          openModal();
+        }}
         style={style.button}
         iconProps={{iconType: ICON_TYPES.PLUS, iconSize: 20}}
         textProps={{text: 'Add Expense'}}
