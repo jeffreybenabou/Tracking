@@ -31,16 +31,16 @@ const CustomListSection: React.FC<SectionProps> = props => {
       section.data.length > 0 ? <SectionHeader title={section.title} /> : null,
     [],
   );
-  const renderItem = useCallback(
-    ({item}: {item: Expense}) => (
+
+  const renderItem = ({item}: {item: Expense}) => {
+    return (
       <RenderItem
         deleteAction={deleteAction}
         editAction={editAction}
         item={item}
       />
-    ),
-    [deleteAction, editAction],
-  );
+    );
+  };
 
   return (
     <SectionList
