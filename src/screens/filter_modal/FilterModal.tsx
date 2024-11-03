@@ -2,7 +2,6 @@ import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import CustomText from '../../components/CustomText.tsx';
 import FilterSection from '../home/FilterSection.tsx';
-import Choosefilters from './Choosefilters.tsx';
 import CustomButton from '../../components/CustomButton.tsx';
 import {regularButton} from '../../utils/globalStyles.tsx';
 import {ExpenseSection} from '../../types/Types.tsx';
@@ -19,28 +18,37 @@ import {useModal} from '../../components/modal/ModalProvider.tsx';
 const FilterModal = () => {
   const dispatch = useDispatch();
   const {closeModal} = useModal();
-  const {filteredExpensesValue = '', expenses = []} = useSmartSelectors([
-    'filteredExpensesValue',
-    'expenses',
-  ]);
+  const [expenseAmount, setAmount] = React.useState<string>('');
+  const [expenseTitle, setTitle] = React.useState<string>('');
+  const [expenseDate, setDate] = React.useState<string>('');
+  const {expenses = []} = useSmartSelectors(['expenses']);
+
+  const changeExpenseSearch = (key: string, value: string) => {
+    if (key === 'title') {
+      setTitle(value);
+    } else if (key === 'amount') {
+      setAmount(value);
+    } else {
+      setDate(value);
+    }
+  };
 
   const filterAction = () => {
     let expenses_: ExpenseSection[] = cloneDeep(expenses);
-    expenses_ = expenses_.filter((section: ExpenseSection) => {
-      section.data = section.data.filter(date => {
-        return (
-          new Date(date.date)
-            .toString()
-            .toLowerCase()
-            .includes(filteredExpensesValue.toLowerCase()) ||
-          date.title
-            .toLowerCase()
-            .includes(filteredExpensesValue.toLowerCase()) ||
-          date.amount
-            .toString()
-            .toLowerCase()
-            .includes(filteredExpensesValue.toLowerCase())
-        );
+    expenses_ = expenses_.filter(section => {
+      section.data = section.data.filter(expense => {
+        const matchesDate = new Date(expense.date)
+          .toString()
+          .toLowerCase()
+          .includes(expenseDate.toLowerCase());
+        const matchesTitle = expense.title
+          .toLowerCase()
+          .includes(expenseTitle.toLowerCase());
+        const matchesAmount = expense.amount
+          .toString()
+          .toLowerCase()
+          .includes(expenseAmount.toLowerCase());
+        return matchesTitle && matchesAmount && matchesDate;
       });
       return section.data.length > 0;
     });
@@ -57,12 +65,28 @@ const FilterModal = () => {
   return (
     <View style={style.container}>
       <CustomText style={style.title} text={'Filter Modal'} />
-      <FilterSection />
+      <FilterSection
+        value={expenseTitle}
+        changeValue={changeExpenseSearch}
+        keyValue={'title'}
+        translation={'Title'}
+      />
+      <FilterSection
+        value={expenseAmount}
+        changeValue={changeExpenseSearch}
+        keyValue={'amount'}
+        translation={'Amount'}
+      />
+      <FilterSection
+        value={expenseDate}
+        changeValue={changeExpenseSearch}
+        keyValue={'date'}
+        translation={'Date'}
+      />
       <CustomButton
         onPress={restFilters}
         textProps={{style: style.clean, text: 'Clean Filters'}}
       />
-      <Choosefilters />
       <CustomButton
         style={regularButton.button}
         onPress={filterAction}
@@ -89,6 +113,7 @@ const style = StyleSheet.create({
     backgroundColor: 'blue',
   },
   clean: {
+    marginVertical: 10,
     color: 'red',
     borderBottomWidth: 1,
     alignSelf: 'flex-start',
