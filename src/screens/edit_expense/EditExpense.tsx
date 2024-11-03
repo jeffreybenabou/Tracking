@@ -97,7 +97,6 @@ const EditExpense = () => {
         expensesArray[sectionIndex_].data.push(expense_);
       }
     }
-
     dispatch(setExpenses(expensesArray));
     closeModal();
   };

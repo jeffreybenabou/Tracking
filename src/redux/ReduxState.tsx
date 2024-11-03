@@ -39,7 +39,7 @@ const findInExpensiveIndex = (
   });
 };
 
-const changeExpensive = (
+const changeExpense = (
   expenses: ExpenseSection[],
   sectionIndex: number,
   expenseId: number,
@@ -88,16 +88,12 @@ export const counterReducer = createSlice({
     },
     deleteExpense: (state: CounterState, action: PayloadAction<Expense>) => {
       const sectionId = new Date(action.payload.date).toDateString();
-      ['expenses', 'filterExpenses'].forEach(key => {
-        // @ts-ignore
-        const sectionIndex: number = findInExpensiveIndex(
-          state[key],
-          sectionId,
-        );
-
+      const states: Array<keyof CounterState> = ['expenses', 'filterExpenses'];
+      states.forEach((key: keyof CounterState) => {
+        const expenses = state[key] as ExpenseSection[];
+        const sectionIndex: number = findInExpensiveIndex(expenses, sectionId);
         if (sectionIndex !== -1) {
-          // @ts-ignore
-          changeExpensive(state[key], sectionIndex, action.payload.id);
+          changeExpense(expenses, sectionIndex, action.payload.id);
           if (key === 'expenses') {
             storeData('expenses', state[key]);
           }
