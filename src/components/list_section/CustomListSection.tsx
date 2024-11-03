@@ -46,6 +46,7 @@ const CustomListSection: React.FC<SectionProps> = props => {
     <SectionList
       keyExtractor={(item, index) => '' + (item.id + index)}
       {...props}
+      ListEmptyComponent={() => <SectionHeader title="No expenses" />}
       sections={props.sections}
       renderSectionHeader={renderSectionHeader}
       renderItem={renderItem}
