@@ -1,27 +1,29 @@
 import React from 'react';
 import CustomInput from '../../components/CustomInput.tsx';
 import {StyleSheet} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {setFilteredExpensesValue} from '../../redux/ReduxState.tsx';
-import useSmartSelectors from '../../hooks/useSmartSelectors.tsx';
 
-const FilterSection = () => {
-  const {filteredExpensesValue = ''} = useSmartSelectors([
-    'filteredExpensesValue',
-  ]);
-  const dispatch = useDispatch();
-
-  function filterExpenses(value: string) {
-    dispatch(setFilteredExpensesValue(value));
-  }
+const FilterSection = ({
+  translation,
+  keyValue,
+  changeValue,
+  value,
+}: {
+  translation: string;
+  keyValue: string;
+  changeValue: (key: string, value: string) => void;
+  value: string;
+}) => {
+  const filterExpenses = (inputValue: string) => {
+    changeValue(keyValue, inputValue);
+  };
 
   return (
     <CustomInput
-      value={filteredExpensesValue}
+      value={value}
       onChangeText={filterExpenses}
       containerStyle={style.filterContainer}
       showLabel={true}
-      labelText={'Filter'}
+      labelText={translation}
     />
   );
 };
