@@ -58,4 +58,11 @@ const style = StyleSheet.create({
   },
 });
 
-export default React.memo(RenderItem);
+export default React.memo(RenderItem, (prev, next) => {
+  return (
+    prev.item.id === next.item.id &&
+    prev.item.title === next.item.title &&
+    prev.item.amount === next.item.amount &&
+    prev.item.date === next.item.date
+  );
+});
