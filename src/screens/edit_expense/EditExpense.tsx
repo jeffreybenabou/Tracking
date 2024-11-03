@@ -148,10 +148,14 @@ const EditExpense = () => {
         onChangeText={value => handleChange('title', value)}
       />
       <CustomText style={style.dateTitle} text={'Pick Date'} />
-      <DatePicker
-        date={new Date(expense.date)}
-        onDateChange={value => handleChange('date', value)}
-      />
+      <View style={style.dateView}>
+        <DatePicker
+          style={style.dateContainer}
+          date={new Date(expense.date)}
+          onDateChange={value => handleChange('date', value)}
+        />
+      </View>
+
       <CustomButton
         onPress={saveData}
         textProps={{text: 'Save', style: regularButton.text}}
@@ -178,6 +182,12 @@ const style = StyleSheet.create({
   dateTitle: {
     fontSize: 20,
     marginTop: 20,
+  },
+  dateView: {borderColor: 'red', backgroundColor: '#bdc7ec', margin: 5},
+  dateContainer: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default EditExpense;
