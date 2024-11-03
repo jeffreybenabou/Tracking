@@ -30,6 +30,33 @@ const createInitialState = (): CounterState => ({
 const initialState = createInitialState();
 const restStateObject = createInitialState();
 
+const findInExpensiveIndex = (
+  expenses: ExpenseSection[],
+  sectionId: string,
+) => {
+  return expenses.findIndex((sectionToFind: ExpenseSection) => {
+    return sectionToFind.title === sectionId;
+  });
+};
+
+const changeExpensive = (
+  expenses: ExpenseSection[],
+  sectionIndex: number,
+  expenseId: number,
+) => {
+  if (sectionIndex !== -1) {
+    const index = expenses[sectionIndex].data.findIndex(
+      expense => expense.id === expenseId,
+    );
+    if (index !== -1) {
+      expenses[sectionIndex].data.splice(index, 1);
+      if (expenses[sectionIndex].data.length === 0) {
+        expenses.splice(sectionIndex, 1);
+      }
+    }
+  }
+};
+
 export const counterReducer = createSlice({
   name: 'counter',
   initialState,
@@ -61,25 +88,21 @@ export const counterReducer = createSlice({
     },
     deleteExpense: (state: CounterState, action: PayloadAction<Expense>) => {
       const sectionId = new Date(action.payload.date).toDateString();
-      const sectionIndex: number = state.expenses.findIndex(
-        (sectionToFind: ExpenseSection) => {
-          return sectionToFind.title === sectionId;
-        },
-      );
-
-      if (sectionIndex !== -1) {
-        const index = state.expenses[sectionIndex].data.findIndex(
-          expense => expense.id === action.payload.id,
+      ['expenses', 'filterExpenses'].forEach(key => {
+        // @ts-ignore
+        const sectionIndex: number = findInExpensiveIndex(
+          state[key],
+          sectionId,
         );
-        if (index !== -1) {
-          state.expenses[sectionIndex].data.splice(index, 1);
-          if (state.expenses[sectionIndex].data.length === 0) {
-            state.expenses.splice(sectionIndex, 1);
+
+        if (sectionIndex !== -1) {
+          // @ts-ignore
+          changeExpensive(state[key], sectionIndex, action.payload.id);
+          if (key === 'expenses') {
+            storeData('expenses', state[key]);
           }
         }
-      }
-      state.filterExpenses = state.expenses;
-      storeData('expenses', state.expenses);
+      });
     },
     setExpenses: (
       state: CounterState,

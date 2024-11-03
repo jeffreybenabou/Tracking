@@ -17,7 +17,6 @@ const RenderItem = (props: {
   const deleteAction = () => {
     props.deleteAction(props.item);
   };
-
   return (
     <View key={props.item.id} style={style.container}>
       <View>
